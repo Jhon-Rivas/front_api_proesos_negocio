@@ -25,22 +25,22 @@ function listarCategorias(){
                     <thead>
                         <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Last Name</th>
+                        <th scope="col">Category name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody id="listar">`;
             for(const categoria of data){
-                //console.log(categoria.id)
+                //console.log(categoria.id_ct)
                 categorias += `
                 
                         <tr>
-                            <th scope="row">${categoria.id}</th>
+                            <th scope="row">${categoria.id_ct}</th>
                             <td>${categoria.nombre}</td>
                             <td>${categoria.descripcion}</td>
                             <td>
-                            <a href="#" onclick="verCategoria('${categoria.id}')" class="btn btn-outline-info">
+                            <a href="#" onclick="verCategoria('${categoria.id_ct}')" class="btn btn-outline-info">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             </td>
@@ -56,32 +56,7 @@ function listarCategorias(){
     })
 }
 
-/*onclick="eliminaCategoria('${categoria.id}')">
-    <i class="fa-solid fa-user-minus"></i>
-
-function eliminaCategoria(id){
-    validaToken();
-    var settings={
-        method: 'DELETE',
-        headers:{
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.token
-        },
-    }
-    fetch(urlApi_ct+"/categoria/"+id,settings)
-    .then((data) => {
-        console.log(data); // JSON data parsed by `data.json()` call
-        listarCategorias();
-        alertas("Se ha eliminado el usuario exitosamente!",2)
-      })
-}
-
-<a href="#" onclick="verModificarcategoria('${categoria.id}')" class="btn btn-outline-warning">
-    <i class="fa-solid fa-user-pen"></i>
-</a>
-
-function verModificarCategoria(id){
+function verCategoria(id_ct){
     validaToken();
     var settings={
         method: 'GET',
@@ -91,75 +66,7 @@ function verModificarCategoria(id){
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi_ct+"/categoria/"+id,settings)
-    .then(response => response.json())
-    .then(function(usuario){
-            var cadena='';
-            if(categoria){                
-                cadena = `
-                <div class="p-3 mb-2 bg-light text-dark">
-                    <h1 class="display-5"><i class="fa-solid fa-user-pen"></i> Modificar Categoria</h1>
-                </div>
-              
-                <form action="" method="post" id="myForm">
-                    <input type="hidden" name="id" id="id" value="${usuario.id}">
-                    <label for="nombre" class="form-label">First Name</label>
-                    <input type="text" class="form-control" name="nombre" id="nombre" required value="${usuario.nombre}"> <br>
-                    <label for="apellidos"  class="form-label">Last Name</label>
-                    <input type="text" class="form-control" name="apellidos" id="apellidos" required value="${usuario.apellidos}"> <br>
-                    <label for="documento"  class="form-label">document</label>
-                    <input type="text" class="form-control" name="documento" id="documento" required value="${usuario.documento}"> <br>
-                    <label for="correo" class="form-label">correo</label>
-                    <input type="correo" class="form-control" name="correo" id="correo" required value="${usuario.correo}"> <br>
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required> <br>
-                    <button type="button" class="btn btn-outline-warning" 
-                        onclick="modificarUsuario('${usuario.id}')">Modificar
-                    </button>
-                </form>`;
-            }
-            document.getElementById("contentModal").innerHTML = cadena;
-            var myModal = new bootstrap.Modal(document.getElementById('modalUsuario'))
-            myModal.toggle();
-    })
-}
-
-async function modificarUsuario(id){
-    validaToken();
-    var myForm = document.getElementById("myForm");
-    var formData = new FormData(myForm);
-    var jsonData = {};
-    for(var [k, v] of formData){//convertimos los datos a json
-        jsonData[k] = v;
-    }
-    const request = await fetch(urlApi_ct+"/usuario/"+id, {
-        method: 'PUT',
-        headers:{
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.token
-        },
-        body: JSON.stringify(jsonData)
-    });
-    listarUsuarios();
-    alertas("Se ha modificado el usuario exitosamente!",1)
-    document.getElementById("contentModal").innerHTML = '';
-    var myModalEl = document.getElementById('modalUsuario')
-    var modal = bootstrap.Modal.getInstance(myModalEl) // Returns a Bootstrap modal instance
-    modal.hide();
-}*/
-
-function verCategoria(id){
-    validaToken();
-    var settings={
-        method: 'GET',
-        headers:{
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.token
-        },
-    }
-    fetch(urlApi_ct+"/categoria/"+id,settings)
+    fetch(urlApi_ct+"/categoria/"+id_ct,settings)
     .then(response => response.json())
     .then(function(categoria){
             var cadena='';
@@ -203,10 +110,10 @@ function registerForm_ct(auth=false){
             </div>
               
             <form action="" method="post" id="myForm_ct">
-                <input type="hidden" name="id" id="id">
-                <label for="nombre" class="form-label">Nombre de la categoría</label>
+                <input type="hidden" name="id_ct" id="id_ct">
+                <label for="nombre" class="form-label">Category name</label>
                 <input type="text" class="form-control" name="nombre" id="nombre" required> <br>
-                <label for="descripcion"  class="form-label">Descripción</label>
+                <label for="descripcion"  class="form-label">Description</label>
                 <input type="text" class="form-control" name="descripcion" id="descripcion" required> <br>
                 <button type="button" class="btn btn-outline-info" onclick="registrarCategoria('${auth}')">Registrar</button>
             </form>`;
@@ -216,18 +123,20 @@ function registerForm_ct(auth=false){
 }
 
 async function registrarCategoria(auth=false){
+    validaToken();
     var myForm = document.getElementById("myForm_ct");
     var formData = new FormData(myForm);
     var jsonData = {};
     for(var [k, v] of formData){//convertimos los datos a json
         jsonData[k] = v;
     }
-    console.log("data categorie ",jsonData);
+    console.log("data category ",jsonData);
     const request = await fetch(urlApi_ct+"/categoria", {
         method: 'POST',
         headers:{
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.token,
         },
         body: JSON.stringify(jsonData)
     })

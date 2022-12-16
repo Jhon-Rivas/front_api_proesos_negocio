@@ -2,6 +2,7 @@
 const urlApi = "http://localhost:9000";//colocar la url con el puerto
 
 async function login(){
+    let correo = document.querySelector('#myForm #correo').value;
     var myForm = document.getElementById("myForm");
     var formData = new FormData(myForm);
     var jsonData = {};
@@ -19,9 +20,31 @@ async function login(){
     const request = await fetch(urlApi+"/auth/login",settings);
     if(request.ok){
         const respuesta = await request.text();        
-        localStorage.token = respuesta;     
-        location.href= "dashboard.html";
+        localStorage.token = respuesta;
+        localStorage.correo = correo;
+        buscarUsuario();
+        setTimeout(function(){
+            location.href= "dashboard.html";
+        }, 3600);
     }
+}
+
+async function buscarUsuario(){
+    var settings={
+        method: 'GET',
+        header:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.token
+        },
+    }
+    fetch(urlApi+"/usuario"+localStorage.correo,settings)
+    .then(response => response.json())
+    .then(function(usuario){
+        if(usuario){
+            localStorage.id=usuario.id;
+        }
+    })
 }
 
 function listarUsuarios(){
@@ -116,7 +139,7 @@ function verModificarUsuario(id){
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/usuario/"+id,settings)
+    fetch(urlApi+"/usuario/ver/"+id,settings)
     .then(response => response.json())
     .then(function(usuario){
             var cadena='';
@@ -157,7 +180,7 @@ async function modificarUsuario(id){
     for(var [k, v] of formData){//convertimos los datos a json
         jsonData[k] = v;
     }
-    const request = await fetch(urlApi+"/usuario/"+id, {
+    const request = await fetch(urlApi+"/usuario/modificar/"+id, {
         method: 'PUT',
         headers:{
             'Accept': 'application/json',
@@ -184,7 +207,7 @@ function verUsuario(id){
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/usuario/"+id,settings)
+    fetch(urlApi+"/usuario/ver/"+id,settings)
     .then(response => response.json())
     .then(function(usuario){
             var cadena='';
