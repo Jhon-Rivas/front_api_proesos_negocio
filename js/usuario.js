@@ -38,11 +38,12 @@ async function buscarUsuario(){
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/usuario"+localStorage.correo,settings)
+    fetch(urlApi+"/usuario/"+localStorage.correo,settings)
     .then(response => response.json())
     .then(function(usuario){
         if(usuario){
             localStorage.id=usuario.id;
+            alert(localStorage.id);
         }
     })
 }
